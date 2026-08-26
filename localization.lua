@@ -34,6 +34,7 @@ L:RegisterTranslations("enUS", function() return {
 ["Left Icon"] = true,
 ["Icon Size"] = true,
 ["Proximity Leeway"] = true,
+["Show Spell Icons"] = true,
 ["Use Map Proximity"] = true,
 ["Out of Range Alpha"] = true,
 ["Smart Center"] = true,
@@ -105,6 +106,7 @@ L:RegisterTranslations("enUS", function() return {
 ["position_tooltip"] = "Shift+Ctrl = 100\nShift = 10",
 ["draggable_tooltip"] = "Note: Possible client crash bug\n           Smart Center disabled",
 ["icon_tooltip"] = "Toggle to invert icon display.",
+["showspellicons_tooltip"] = "Show the actual spell icon on tracker icons instead of just a color.",
 ["icon_ooc_tooltip"] = "Will only display out of combat. Toggle to invert icon display.",
 
 
@@ -140,6 +142,7 @@ L:RegisterTranslations("ruRU", function() return {
 ["Bottom Left Icon"] = "Значек снизу слева",
 ["Left Icon"] = "Значек слева",
 ["Icon Size"] = "Размер значка",
+["Show Spell Icons"] = "Показывать иконки заклинаний",
 ["Proximity Leeway"] = "Proximity Leeway", --
 ["Use Map Proximity"] = "Использовать карту приближения",
 ["Smart Center"] = "Умный центр",
@@ -202,5 +205,6 @@ L:RegisterTranslations("ruRU", function() return {
 ["position_tooltip"] = "Shift+Ctrl = 100\nShift = 10",
 ["draggable_tooltip"] = "Примечание. Возможен сбой клиента.\n           Умный центр отключен",
 ["icon_tooltip"] = "Переключить, чтобы инвертировать отображение значков.",
+["showspellicons_tooltip"] = "Показывать реальную иконку заклинания на значках отслеживания вместо просто цвета.",
 
 } end)

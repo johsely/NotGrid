@@ -213,6 +213,10 @@ local menuarray = {
 		maxval = 30,
 		},
 	},
+	{text = L["Show Spell Icons"],
+	toggle = "showspellicons",
+	tooltip = L["showspellicons_tooltip"],
+	},
 	{text = L["Top Left Icon"],
 	toggle = "trackingicon1invert",
 	editbox = {

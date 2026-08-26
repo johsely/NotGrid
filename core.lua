@@ -341,16 +341,17 @@ function NotGrid:UNIT_AURA(unitid)
 	local o = self.o
 	local f = self.UnitFrames[unitid]
 
-	local auratable = self.Compost:Acquire() -- I only care about buffname for buffs -- reset every time
+	local auratable = self.Compost:Acquire() -- maps aura names & debuff types to their icon texture -- reset every time
 
 	if f and UnitExists(unitid) then
 		--get buff info -- loop through every buff and adds info to table
 		local bi = 1
 		while (UnitBuff(unitid,bi) ~= nil) do
+			local bufftexture = UnitBuff(unitid,bi)
 			self.Gratuity:SetUnitBuff(unitid,bi)
 			local buffname = self.Gratuity:GetLine(1)
 			if buffname then
-				auratable[buffname] = true
+				auratable[buffname] = bufftexture
 			end
 			bi = bi + 1;
 		end
@@ -358,35 +359,38 @@ function NotGrid:UNIT_AURA(unitid)
 		--get debuff info -- same as above
 		local di = 1
 		while (UnitDebuff(unitid,di) ~= nil) do
+			local debufftexture, _, spelltype = UnitDebuff(unitid,di) -- texture, applications, type
 			self.Gratuity:SetUnitDebuff(unitid,di)
 			local debuffname = self.Gratuity:GetLine(1)
-			local _, _, spelltype =  UnitDebuff(unitid,di) -- texture, applications, type
 			if debuffname then
-				auratable[debuffname] = true
+				auratable[debuffname] = debufftexture
 			end
 			if spelltype then
-				auratable[spelltype] = true
+				auratable[spelltype] = debufftexture
 			end
 			di = di + 1;
 		end
 
         for i=1,11 do -- Changed from 8 to 11 as we've added Buff Icon 1,2 and 3 (9th, 10th, 11th Icon)
-            local f = f.healthbar["trackingicon"..i]
+            local fi = f.healthbar["trackingicon"..i]
+            local texture = self:CheckAura(i,auratable)
             
             -- Hide icons 9, 10, 11 during combat
             if self.inCombat and (i == 9 or i == 10 or i == 11) then
-                f:Hide()
-            elseif self:CheckAura(i,auratable) then
+                fi:Hide()
+            elseif texture then
                 if self.o["trackingicon"..i.."invert"] then
-                    f:Hide()
+                    fi:Hide()
                 else
-                    f:Show()
+                    self:SetTrackingIconTexture(fi, texture)
+                    fi:Show()
                 end
             else
+                fi.spellicon:SetTexture("") -- clear so stale icons don't linger (invert shows the plain color)
                 if self.o["trackingicon"..i.."invert"] then
-                    f:Show()
+                    fi:Show()
                 else
-                    f:Hide()
+                    fi:Hide()
                 end
             end
         end
@@ -397,8 +401,16 @@ end
 function NotGrid:CheckAura(i, auratable)
 	for _,text in self.o["trackingicon"..i] do
 		if auratable[text] then
-			return true
+			return auratable[text] -- the matched aura's icon texture
 		end
+	end
+end
+
+function NotGrid:SetTrackingIconTexture(fi, texture)
+	if self.o.showspellicons then
+		fi.spellicon:SetTexture(texture)
+	else
+		fi.spellicon:SetTexture("") -- fall back to the plain colored backdrop
 	end
 end
 

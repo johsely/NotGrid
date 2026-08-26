@@ -27,6 +27,7 @@ local DefaultOptions = {
 	["unittrackingiconsize"] = 6,
 	["unittrackingiconborder"] = 1,
 	["unittrackingiconbordercolor"] = {0,0,0,1},
+	["showspellicons"] = true,
 	["unitnumberfont"] = "Fonts\\custom\\SF-Pro-Display-Medium.ttf",
 
 	["showraidicon"] = true,

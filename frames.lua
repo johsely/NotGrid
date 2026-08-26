@@ -88,7 +88,7 @@ function NotGrid:CreateUnitFrame(unitid,raidindex)
 				-- Adding spell icon texture
 				f.healthbar["trackingicon"..i].spellicon = f.healthbar["trackingicon"..i]:CreateTexture("$parentspellicon", "BACKGROUND")
 				f.healthbar["trackingicon"..i].spellicon:SetAllPoints()
-				f.healthbar["trackingicon"..i].spellicon:SetAlpha(0.3) -- Translucancy for icon background
+				f.healthbar["trackingicon"..i].spellicon:SetAlpha(1) -- full opacity: the spell icon replaces the colored backdrop when shown
 	end
 
 	f.raidicon = CreateFrame("Frame", nil, f.healthbar)
