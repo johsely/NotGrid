@@ -398,10 +398,20 @@ function NotGrid:UNIT_AURA(unitid)
     self.Compost:Reclaim(auratable)
 end
 
+local function NormalizeAuraName(str)
+	if not str then return "" end
+	return string.gsub(string.lower(str), "[\128-\255]", "")
+end
+
 function NotGrid:CheckAura(i, auratable)
 	for _,text in self.o["trackingicon"..i] do
-		if auratable[text] then
-			return auratable[text] -- the matched aura's icon texture
+		local ntext = NormalizeAuraName(text)
+		if ntext ~= "" then
+			for aname, atexture in auratable do
+				if NormalizeAuraName(aname) == ntext then
+					return atexture -- the matched aura's icon texture
+				end
+			end
 		end
 	end
 end
