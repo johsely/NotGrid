@@ -1,5 +1,10 @@
 local L = AceLibrary("AceLocale-2.2"):new("NotGrid")
 
+local has_unitxp = pcall(UnitXP, "inSight", "player", "player")
+if not has_unitxp then
+	DEFAULT_CHAT_FRAME:AddMessage("|cff00ccffNotGrid:|r UnitXP API not available - proximity checks will use fallback methods (CheckInteractDistance, map distances).")
+end
+
 local spells40yd = { -- Macros are forced to have text associated with them so we can safely just check the textures as well as check against the presence of text. No need for Gratuity or Babble overhead. Though if they have an item in their bar that matches the texture then GG haha
 	["PALADIN"] = {"Interface\\Icons\\Spell_Holy_FlashHeal", "Interface\\Icons\\Spell_Holy_HolyBolt"},
 	["PRIEST"] = {"Interface\\Icons\\Spell_Holy_FlashHeal", "Interface\\Icons\\Spell_Holy_LesserHeal", "Interface\\Icons\\Spell_Holy_Heal", "Interface\\Icons\\Spell_Holy_GreaterHeal", "Interface\\Icons\\Spell_Holy_Renew"},
@@ -47,9 +52,9 @@ function NotGrid:CheckProximity(unitid) -- return 1=confirmed_true, 2=confirmed_
 		--check these scenarios first even if the player has check with map toggled
 		if UnitIsUnit(unitid, "player") then --unitisplayer, 0 yards
 			return 1
-		elseif UnitXP and not UnitXP("inSight", "player", unitid) then -- use UnitXP to check if unit is in sight
+		elseif has_unitxp and not UnitXP("inSight", "player", unitid) then -- use UnitXP to check if unit is in sight
 			return 2
-		elseif UnitXP and UnitXP("distanceBetween", "player", unitid) <= 40 then
+		elseif has_unitxp and UnitXP("distanceBetween", "player", unitid) <= 40 then
 			return 1
 		elseif CheckInteractDistance(unitid, 3) then -- duel range, 10 yards
 			return 1

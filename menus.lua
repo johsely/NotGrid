@@ -407,7 +407,7 @@ local menuarray = {
 	},
 	{text = L["Out of Range Alpha"], 
 	slider = {
-		key = "ooralphaa",
+		key = "ooralpha",
 		minval = 0,
 		maxval = 1,
 		stepvalue = 0.1,
