@@ -106,7 +106,16 @@ function NotGrid:CreateUnitFrame(unitid,raidindex)
 			self:ClickHandle(arg1)
 		end
 	end)
+	f:EnableMouseWheel(true)
+	local onMouseWheel = function()
+		local direction = arg1 > 0 and "MouseWheelUp" or "MouseWheelDown"
+		if Clique then
+			Clique:OnClick(direction, f.unit)
+		end
+	end
+	f:SetScript("OnMouseWheel", onMouseWheel)
 	f:SetScript("OnEnter", function()
+		if not self.o then return end
 		if UnitAffectingCombat("player") and self.o.disablemouseoverincombat then
 			return
 		end
@@ -118,11 +127,13 @@ function NotGrid:CreateUnitFrame(unitid,raidindex)
 	end)
 
 	f:SetScript("OnDragStart", function()  -- on drag of any unit frame will drag the NotGridContainer frame
+		if not self.o then return end
 		if self.o.draggable then
 			self.Container:StartMoving()
 		end
 	end)
 	f:SetScript("OnDragStop", function()
+		if not self.o then return end
 		if self.o.draggable then
 			self.Container:StopMovingOrSizing()
 		end

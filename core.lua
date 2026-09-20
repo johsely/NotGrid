@@ -17,13 +17,12 @@ function NotGrid:OnInitialize()
 	self.ProximityVars = {} -- will hold vars related to proximity handling. Mostly world map stuff
 	self:GetFortyYardSpell() -- queries the player's action bars for a 40 yard spell to use in proximity checking
 	self:GetMapSizes() -- populate ProximityVars with mapsizes of server
-	--
-	self:CreateFrames()
 end
 
 function NotGrid:OnEnable()
 	self.o = NotGridOptions -- Need to wait for addon to be fully initialized and saved variables loaded before I set this
 	self:SetDefaultOptions() -- if NotGridOptions is empty(no saved variables) this will fill it up with defaults
+	self:CreateFrames() -- frames depend on self.o, so create them here instead of OnInitialize
 	self:DoDropDown()
 	self:ConfigUnitFrames()
 	--proximity stuff
@@ -127,6 +126,7 @@ end
 ---------------
 
 function NotGrid:UNIT_MAIN(unitid)
+	if not self.o then return end
 	local o = self.o
 	local f = self.UnitFrames[unitid]
 	if o.configmode then
