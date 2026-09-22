@@ -106,14 +106,37 @@ function NotGrid:CreateUnitFrame(unitid,raidindex)
 			self:ClickHandle(arg1)
 		end
 	end)
-	f:EnableMouseWheel(true)
-	local onMouseWheel = function()
-		local direction = arg1 > 0 and "MouseWheelUp" or "MouseWheelDown"
-		if Clique then
-			Clique:OnClick(direction, f.unit)
-		end
-	end
-	f:SetScript("OnMouseWheel", onMouseWheel)
+	
+	-- 1. Defined mouse wheel handler with parent unit fallback
+    local onMouseWheel = function()
+        -- Resolve unit: if 'this' is f.healthbar or f.powerbar, grab unit from parent 'f'
+        local unit = this.unit or (this:GetParent() and this:GetParent().unit)        		
+		if not unit then return end
+
+        local direction = arg1 > 0 and "MouseWheelUp" or "MouseWheelDown"
+
+		-- only pass on to clique if it is loaded
+        if Clique then
+            if Clique:OnClick(direction, unit) then
+                return true
+            end                    
+        end
+    end
+
+    -- 2. Enable mouse wheel
+    f:EnableMouseWheel(true)
+    f:SetScript("OnMouseWheel", onMouseWheel)
+
+    if f.healthbar then
+        f.healthbar:EnableMouseWheel(true)
+        f.healthbar:SetScript("OnMouseWheel", onMouseWheel)
+    end
+
+    if f.powerbar then
+        f.powerbar:EnableMouseWheel(true)
+        f.powerbar:SetScript("OnMouseWheel", onMouseWheel)
+    end
+
 	f:SetScript("OnEnter", function()
 		if not self.o then return end
 		if UnitAffectingCombat("player") and self.o.disablemouseoverincombat then
