@@ -2,6 +2,23 @@
 -- Creating Frames --
 ---------------------
 
+-- Create global Virtual Buttons for MouseWheel routing
+if not NotGridScrollUpButton then
+    local btnUp = CreateFrame("Button", "NotGridScrollUpButton", UIParent)
+    btnUp:SetScript("OnClick", function()
+        if NotGrid.hoverUnit and Clique then
+            Clique:OnClick("MouseWheelUp", NotGrid.hoverUnit)
+        end
+    end)
+
+    local btnDown = CreateFrame("Button", "NotGridScrollDownButton", UIParent)
+    btnDown:SetScript("OnClick", function()
+        if NotGrid.hoverUnit and Clique then
+            Clique:OnClick("MouseWheelDown", NotGrid.hoverUnit)
+        end
+    end)
+end
+
 function NotGrid:CreateFrames()
 	self.Container = self:CreateContainerFrame()
 	for i=1,40 do 
@@ -107,37 +124,15 @@ function NotGrid:CreateUnitFrame(unitid,raidindex)
 		end
 	end)
 	
-	-- 1. Defined mouse wheel handler with parent unit fallback
-    local onMouseWheel = function()
-        -- Resolve unit: if 'this' is f.healthbar or f.powerbar, grab unit from parent 'f'
-        local unit = this.unit or (this:GetParent() and this:GetParent().unit)        		
-		if not unit then return end
+	
+	f:SetScript("OnEnter", function()		
+		-- 1. Store hovered unit ID globally on NotGrid
+        NotGrid.hoverUnit = this.unit
 
-        local direction = arg1 > 0 and "MouseWheelUp" or "MouseWheelDown"
-
-		-- only pass on to clique if it is loaded
-        if Clique then
-            if Clique:OnClick(direction, unit) then
-                return true
-            end                    
-        end
-    end
-
-    -- 2. Enable mouse wheel
-    f:EnableMouseWheel(true)
-    f:SetScript("OnMouseWheel", onMouseWheel)
-
-    if f.healthbar then
-        f.healthbar:EnableMouseWheel(true)
-        f.healthbar:SetScript("OnMouseWheel", onMouseWheel)
-    end
-
-    if f.powerbar then
-        f.powerbar:EnableMouseWheel(true)
-        f.powerbar:SetScript("OnMouseWheel", onMouseWheel)
-    end
-
-	f:SetScript("OnEnter", function()
+        -- 2. Bind scroll wheel to virtual buttons
+        SetBindingClick("MOUSEWHEELUP", "NotGridScrollUpButton")
+        SetBindingClick("MOUSEWHEELDOWN", "NotGridScrollDownButton")
+		
 		if not self.o then return end
 		if UnitAffectingCombat("player") and self.o.disablemouseoverincombat then
 			return
@@ -145,7 +140,15 @@ function NotGrid:CreateUnitFrame(unitid,raidindex)
 
 		UnitFrame_OnEnter() -- a blizzard function that handles the tooltip for the unit
 	end)
-	f:SetScript("OnLeave", function() 
+
+	f:SetScript("OnLeave", function() 	
+		-- 1. Clear hovered unit
+        NotGrid.hoverUnit = nil
+
+        -- 2. Restore default camera zoom bindings
+        SetBinding("MOUSEWHEELUP", "CAMERAZOOMIN")
+        SetBinding("MOUSEWHEELDOWN", "CAMERAZOOMOUT")
+			
 		UnitFrame_OnLeave() -- blizz function that handles tooltip for units
 	end)
 
